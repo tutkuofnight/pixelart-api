@@ -49,4 +49,6 @@ const Art = new Schema({
   },
 } , {timestamps: true})
 
+Art.plugin(require('mongoose-autopopulate'))
+
 module.exports = model('art' , Art)

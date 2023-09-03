@@ -1,7 +1,11 @@
 const {model , Schema} = require('mongoose')
+const passportLocalMongoose = require('passport-local-mongoose')
 require('./Art')
 
 const User = new Schema({
+  fullname: {
+    type: String,
+  },
   username: {
     type: String,
     required: true,
@@ -64,5 +68,10 @@ const User = new Schema({
     default: Date.now()
   },
 } , {timestamps: true})
+
+User.plugin(passportLocalMongoose , {
+	usernameField: 'username'
+})
+User.plugin(require('mongoose-autopopulate'))
 
 module.exports = model('user' , User)

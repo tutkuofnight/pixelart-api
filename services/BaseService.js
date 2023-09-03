@@ -9,7 +9,7 @@ class DatabaseService {
     return this.model.findById(id)
   }
   create(data){
-    return new this.BaseModel(data).save()
+    return new this.model(data).save()
   }
   update(id , data){
     return this.model.findByIdAndUpdate(id , data , {new: true})

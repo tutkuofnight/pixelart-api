@@ -7,4 +7,4 @@ class ArtService extends BaseService {
   }
 }
 
-module.exports = ArtService
+module.exports = new ArtService()

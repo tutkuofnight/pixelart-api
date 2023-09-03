@@ -5,6 +5,6 @@ Frontend: [tutkuofnight/pixelartist](https://github.com/tutkuofnight/pixelartist
 ### Todo list
 - [ ] Logger
 - [ ] Validations
-- [ ] Authentication
-- [ ] Redis Initialization
+- [x] Authentication
+- [x] MongoStore Initialization
 - [ ] Docker Initialization

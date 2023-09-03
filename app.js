@@ -1,53 +1,45 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const passport = require('passport')
-const JwtStrategy = require('passport-jwt').Strategy
-const ExtractJwt = require('passport-jwt').ExtractJwt
-const jwt = require('jsonwebtoken')
 const session = require('express-session')
-
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+const MongoStore = require('connect-mongo')
+const User = require('./models/User')
+const helmet = require('helmet')
+const cors = require('cors')
 const app = express()
-require('dotenv').config()
 
+require('dotenv').config()
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(helmet())
+app.use(cors({ credentials: true }))
 app.use(session({
   secret: process.env.AUTH_SECRET,
   resave: true,
   saveUninitialized: true,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL,
+    stringify: false,
+    autoRemove: 'native'
+  }),
   cookie: {
     secure: true,
-  }
+    maxAge: 1000 * 60 * 60 * 24
+  },
 }))
 
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.AUTH_SECRET
-}
+// Passport initialize
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()))
 
-passport.use(new JwtStrategy(jwtOptions, (jwtPayload, done) => {
-  return done(null, { id: jwtPayload.sub })
-}))
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
 
-app.post('/api/login', (req, res) => {
-  const user = {
-    id: 1,
-    username: 'user1'
-  }
+app.use('/user' , require('./routes/user'))
 
-  // Create jwt token
-  const token = jwt.sign({ sub: user.id }, process.env.AUTH_SECRET)
-
-  res.json({ token })
-})
-
-
-app.get('/api/secure', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.json({ message: 'Success' })
-})
-
-// Sunucuyu dinlemeye başlayın
 app.listen(process.env.PORT, () => {
   require('./config/mongodb')()
   console.log(`Server working on: ${process.env.PORT}`)
