@@ -50,5 +50,5 @@ app.get('/api/secure', passport.authenticate('jwt', { session: false }), (req, r
 // Sunucuyu dinlemeye başlayın
 app.listen(process.env.PORT, () => {
   require('./config/mongodb')()
-  console.log(`Server working on: ${port}`)
+  console.log(`Server working on: ${process.env.PORT}`)
 })
