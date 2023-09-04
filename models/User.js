@@ -37,14 +37,14 @@ const User = new Schema({
     {
       type: Schema.Types.ObjectId,
       ref: 'user',
-      autopupulate: {maxDepth: 1},
+      autopupulate: true,
     }
   ],
   following: [
     {
       type: Schema.Types.ObjectId,
       ref: 'user',
-      autopupulate: {maxDepth: 1},
+      autopupulate: true,
     }
   ],
   saved: {
@@ -70,8 +70,9 @@ const User = new Schema({
 } , {timestamps: true})
 
 User.plugin(passportLocalMongoose , {
-	usernameField: 'username'
+  populateFields: ['username' , 'email']
 })
+
 User.plugin(require('mongoose-autopopulate'))
 
 module.exports = model('user' , User)
